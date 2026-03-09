@@ -1,10 +1,22 @@
 import numpy as np
 from vispy import scene, app
+from communication import SignalPool
 from node import Node
 
+# Signals
+
+signal_pool = SignalPool()
+
 # Generate random nodes
+    
 num_nodes = 100
 nodes = [Node(np.random.rand(3) * 100) for _ in range(num_nodes)]
+for node in nodes:
+    node.subscribe(signal_pool)
+
+for node in nodes:
+    discovery_content = f"DISCOVERY\nPOS:{node.pos[0]},{node.pos[1]},{node.pos[2]}".encode()
+    node.broadcast(discovery_content)
 
 # Extract positions for visualization
 pos = np.array([node.pos for node in nodes])
